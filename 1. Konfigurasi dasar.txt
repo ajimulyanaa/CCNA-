@@ -1,0 +1,23 @@
+1. >enable
+2. #configure terminal
+--------------------------------------------------------------
+      // membuat hostname dan password
+3.(config)#hostname namabebas
+4.(config)#enable password passwordbebas
+5.(config)#exit
+6.#write
+
+     //membuat hosname dengan sercer password (rekomendasi)
+3.(config)#hostname bebasnama
+4.(confog)#enable secret passworbebas (ini yang akan dipakai sebai password)
+5.(config)#exit
+6.#exit
+
+   //menghapus configurasi
+3.(config)#no enable password
+
+   //melihat configurasi
+#show running-config
+
+
+  

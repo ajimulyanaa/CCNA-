@@ -1,0 +1,233 @@
+Dynamic routing terbagi kedalam beberapa bagian 
+1.RIP => sudah lama dan jarang sekali digunakan
+2.EIGRP => untuk menyambungkan antara perangkat cisco
+3.OSPF => open untuk semua perangkat vendor
+4.BGP  => open untuk semua vendor
+
+EIGRP DAN OSPF tergabung kedalam igp yaitu untuk mengbungkan router antar perusahaan contohnya google dan google
+
+BGP tergabung kedalam egp yaitu untuk menghubungkan router antar perusahaan contohnya adalah google dan facebook
+
+===============
+EIGRP
+#show ip eigrp number
+===============
+()# conf t
+# router eigrp 1 (autonomus number 1-25565 harus sama antar eigrp)
+#network 10.10.10.0 255.255.255.0 (network connected / network yang berada dalam router)
+
+
+=>TOPOLOGI 2 ROUTER 
+
+R1
+int fa 0/1 -> 10.10.10.1/24
+int fa 0/2 -> 192.168.1.1/24
+
+
+R2
+int fa 0/1 -> 10.10.1.2/24
+int fa o/2 -> 192.168.2.1/24
+
+==>configurasi eigrp
+
+R1
+#router eigrp 1
+#network 10.10.10.0 255.255.255.0
+#network 192.168.1.0 255.255.255.0
+
+R2
+#router eigrp 1
+#network 10.10.10.0 255.255.255.0
+#network 192.168.2.0 255.255.255.0
+
+
+=> topologi 3 router
+
+lanjutan topologi yang 2 router
+
+R2
+int fa 0/3 ->10.10.20.1
+
+
+R3 
+int fa 0/1 -> 10.10.20.2
+int fa 0/2 -> 192.168.3.1
+
+
+#Configurasi eigrp
+R2
+()#route eigrp 1
+# network 10.10.20.0 255.255.255.0
+
+R2
+()#router eigrp 1
+#network 10.10.20.0 255.255.255.0
+#network 192.168.2.0 255.255.255.0
+
+
+=>topologi vlan
+
+tambahkan switch pada router 3 dan kemudian tambahkan vlan dan isi ip address. 
+kemudian setelah itu tambahkan routing pada eigrp
+
+
+
+=======================================================
+OSPF
+Merupakan salah satu routing dynamic yang dapat menghubungkan antara perangkat cisco dan vendor lainya
+# show ip ospf neighbor
+KONFIGURASI
+()#routing ospf 1 (angka 1 adalah id routing yang pada setiap router dapat berbeda-beda 1-25565)
+()#network 10.10.10.1 0.0.0.255 Area 0
+
+
+0.0.0.255 disebut wilcad yang didapat dengan mmengurangi 255.255.255.255 dengan mask dari network ip tersebut
+contohnya ip 10.10.10.0 memiliki netmask 255.255.255.0 maka 255.255.255.255 - 255.255.255.0 adalah 0.0.0.255 yang disebut dengan wilcad
+
+
+untuk area bebas angkanya namu jika ungin memkai area lebih dari 0 maka, harus terhubung pada area 0 dengan kata lain area 0 wajib ada.
+
+topologi 2 router 
+
+R1
+int fa 0/1 10.10.10.1/24
+int fa 0/2 192.168.1.1/24
+
+R2 
+int fa 0/1 10.10.20.1/24
+int fa 0/2 192.268.2.1/24
+
+
+Konfigurasi 
+
+R1 
+()# routing ospf 1
+()#network 10.10.10.10 0.0.0.255 area 0
+()#network 192.168.1.1 0.0.0.255 area 0
+
+
+R2
+()#routing ospf 2
+()#network 10.10.10.0 0.0.0.255 area 0
+()network 192.268.2.0 0.0.0.255 area 0
+
+
+topologi routing 3 router dan beda area
+
+R2
+int fa 0/3 10.10.20.1/30
+
+R3 
+int fa 0/1 10.10.20.2/30
+int fa 0/2 192.168.3.1/24
+
+
+Configurasi routing eigrp
+
+R2
+()#router ospf 2 
+()#network 10.10.20.0 0.0.0.3 area 1
+
+R3 
+()#router ospf 3
+()#netwrok 10.10.20.0 0.0.0.3 area 1
+()#network 192.168.3.0 0.0.0.255 area 1
+
+
+======================================
+Routing BGP 
+open untuk semua vendor
+
+==> show ip bgp summery
+Configurasi
+
+()# routing bgp 1 (1 adalah autonomus number 1-65535)
+()# nighbor 10.10.10.2 remore-as 2 (10.10.10.2 merupakan ip tujuan dan 2 merupakan autonomus number bgp dari router 2 yang akan dihubungkan)
+()# network 192.168.2.0 mask 255.255.255.0 (network dan mask dari connected network)
+
+1. topologi 2 router 
+
+R1 
+int fa 0/1 10.10.10.1
+int fa 0/2 192.168.1.1
+
+R2 
+int fa 0/1 10.10.10.2
+int fa 0/2 192.168.2.1
+
+Configurasi
+
+R1
+#router bgp 1
+#neighbor 10.10.10.2 remote-as 2
+#network 10.10.10.0 mask 255.255.255.0
+#network 192.168.1.0 mask 255.255.255.0
+
+R2
+#router bgp 2
+#neihghbor 10.10.10.1 remote-as 1
+#network 10.10.10.0 mask 255.255.255.0
+#network 192.168.2.0 mask 255.255.255.0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

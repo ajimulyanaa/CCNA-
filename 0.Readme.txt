@@ -1,0 +1,9 @@
+Router> (ini adalah user mode)
+
+Router# (privilege mode)
+
+untuk masuk ke privilege mode maka ketik (Ruter>enable)
+
+Router(config)# (untuk melakukan semua konfigurasi/mode konfiggurasi)
+
+untuk masuk ke mode konfigurasi makan harus mengetikan (Router#configure terminal)

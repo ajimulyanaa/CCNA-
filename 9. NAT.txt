@@ -1,0 +1,76 @@
+NAT (network translation transmission)
+
+static nat = one to one 
+static ip digunakan untuk menerjemahkan ip privat ke ip public biasanya digunakan ketika ada server lokal di topologi jaringan agar dapat diakses dari luar jaringan
+dynamic nat = many to one
+
+menerjemaahkan ip privat menjadi ip public sehingga dapat terhubung ke internet
+
+==========================================================
+TOPOLOGI
+======
+server -> r1 (google)-> r2 (isp) -> r3 (customer) -> sw-1 -> vlan 10,vlan 20,vlan 30.
+
+R1 
+int fa 0/1 172.16.10.2/ 24 (ke server)
+int fa 0/2 10.10.10.1/ 
+
+R2
+int fa 0/2 10.10.10.2
+int fa 0/1 10.10.10.20.1 (ke r3)
+
+R3
+int fa 0/1 10.10.20.2
+int fa 0/2 
+
+SW
+vlan10 192.168.10.0
+vlan20 192.168.20.0
+vlan30 192.168.30.0 (untuk server lokal)
+
+
+====================================
+1. dynamic NAT
+untuk konfigurai nat kita terlebih dahulu harus menentukan default router
+
+
+()# conf t
+()# ip route 0.0.0.0 0.0.0.0 10.10.20.1
+()# acces-list 1 permit 192.168.10.0 0.0.0.255
+()# acces-list 1 permit 192.168.20.0 0.0.0.255
+()# ip nat inside source list 1 int fa 0/1 overload  (int fa 0/1 interface yang mengarah ke isp
+()# int fa 0/1 (ke isp)
+()# ip nat outside
+()# int fa 0/2 (ke jaringan lokal)
+()# ip nat inside
+
+==> 0.0.0.0 0.0.0.0 artinya seluruh network yang terhubung akan di teraslate, 10.10.10.1 artinya adalah network dari router isp
+
+2. dynamic nat 
+
+=> khusus real device harus membuat ip secondari dari port yang mengarah ke isp agar agar nantinya ip secondary ini akan di mentranlate ip server lokal
+R3 
+()# int fa 0/1
+()# ip address 10.10.20.3 255.255.255.0 secondary
+()# ip nat source state 192.168.30.2 10.10.20.3
+()# int fa 0/1
+()# ip nat outside
+()# int fa 0/1.30 (artinya vlan 30 di fa 0/1)
+()# ip nat inside
+
+==>perintah diatas tidak dapat bejalan pada packet tracer
+
+command pacet tracer
+di packet tracer tidak perlu ip secondari karena tidak support
+
+()# ip nat source state 192.168.30.2 10.10.20.3
+()# int fa 0/1
+()# ip nat outside
+()# int fa 0/1.30 (artinya vlan 30 di fa 0/1)
+()# ip nat inside
+
+
+
+
+
+

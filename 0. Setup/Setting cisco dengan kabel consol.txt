@@ -1,0 +1,4 @@
+1. install aplikasi putty
+2. hubungan device cisco dan laptop dengan kabel consol
+3. lihatdevice manager bagian port (COM $ LPT), perhatikan profilic usb to serial ada di COM berapa, untuk nnti dipakai di putty
+4. buka aplikasi putty pilih serial kemudian ganti nama COM sesuai dengan yang ada di device manager.

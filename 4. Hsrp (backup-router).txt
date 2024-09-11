@@ -1,0 +1,29 @@
+HSRP adalah menetapkan router mengambil alih route jika terdapat kegagalan
+
+1. konfigutrasi ip address
+2. routing network
+3. buath dhcp
+
+lakukan config hsrp
+=?stanby 20 (20 menunukan kode hsrp bebas apa saja  nantinya harus berpasangan dengan router backup)
+--->masuk interface untuk client
+
+(ROUTER 1 [primary])
+
+#int fa 0/0 
+#standby 20 ip 192.168.100.1 (ip virtual 192.168.100.1 tidak sama dengan ip interface)
+#standby 20 priority 150 (150 agar router menjadi primary)
+#standby 20 prompt
+
+
+(ROUTER 2 [stanby / backup])
+
+#int fa 0/0 
+#standby 20 ip 192.168.100.1 (ip virtual 192.168.100.1 tidak sama dengan ip interface)
+#standby 20 priority 100 (100 agar router menjadi backup)
+#standby 20 prompt
+
+
+
+
+

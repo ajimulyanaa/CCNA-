@@ -1,0 +1,86 @@
+membatasi satu port interface untuk mac address yang telah didaftarkan terlebih dahulu
+===============================================================================================================
+Protect : port akan tetap menyala namun tidak terhubung (akan mengirimkan sinyal SNP)
+Restric : port akan tetap menyala namun tidak terhubung (tidak akan mengirimkan sinyal SNP)
+Shutwown : port akan dimatikan apabila interface yang terhubung tidak sesuai dengan mac address yang di daftarkan sebelumnya.
+
+		LANGKAH-LANGKAH PENYETINGAN SWITCH
+- ping jaringan
+1. masukan ip pada clien 
+2. lakukan pengecekan koneksi antar device
+
+-melihat mac address yang tertangkap
+>enable
+# show mac-address table
+
+-konfigurasi
+(config)#interface fa 0/1
+(config)#switch mode acces
+(config)#switchport port-security
+(config)#switchport port-security max 1 (artinya hanya 1 mac address)
+(config)#switchport port-security mac-address sticky
+(config)#switchport port-security violation protec (protec,restric,shutdown)
+
+============
+melihat setingan port security
+show port security int fa 0/1
+
+=====================================================================================================
+PORT SECURITY
+digubakan untuk mengamankan port agar yang bisa terhubung ke port tersebut hanya mac adress yang terdaftar.
+
+KONFIGURASI
+ ==>cara 1 dengan mendaftarkan mac adress
+1. pink pc terlebih dahulu
+   1. lakukan pengecekan mac address [show mac-address table]
+   2. copy mac adress yang akan di daftarkan
+
+2. konfigurasu switch
+   ()# conf t
+   ()# int fa 0/1
+   ()# switchport mode acces
+   ()# switchport port-security
+   ()# swithport port-security mac address [copy mac address]
+   ()# switchport port-security max 1 [artinya hanya diizinkan 1 mac adress]
+   ()# switchport port-security violation shutdown
+3. menghidupkan kembali port yang tershutdown karena salah mac adress yang dihubungkan tidak sesuai
+   ()# int fa0/1
+   ()# shutdown
+   ()# no shutdown
+
+=> cara 2 dengan menggunakan mac address sticky [ REKOMENDASI ]
+  dengan ini switch akan mendaftarkan mac adress pertama yang terhubung pada komputer yang akan di daftarkan
+
+1. ping terlebig dahulu antar pc pastikan mac address sudah tertangkap
+
+2.KOnfigurasi switch
+   ()# int fa 0/1
+   ()# switchport mode access
+   ()# switchport port-security
+   ()# switchport port-security mac-address sticky
+   ()# switchport port-security max 1
+   ()# switchport port-security violation shutdown
+
+3. jika terjadi kesalahan menghubugkan mac address maka akan port akan tershutdown dan untuk menyalakan kembali maka perintahnya sebagai berikut
+
+   ()# int fa 0/1
+   ()# shutdown
+   ()# no shutdown
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

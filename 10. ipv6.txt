@@ -1,0 +1,50 @@
+ipv4 = desimal (0-9) / 0-32
+ipv6 = hexadecimal (0-9 a-f) /0-128
+
+ipv6 tidak ada pembatasan kelas 
+=> ip compression dapat menyederhanakan ip dengan menghapus 0 di depan dan jika terdapat 0 berturut turut dapat digantikan dengan ::
+
+topologi jaringan 
+R1
+int fa 0/1 2001:d68:10.1/64
+int fa 0/2 2001:d68:1.1/64
+
+R2
+int fa 0/1 2001:d68:10.2/64
+int fa 0/2 2001:d68:20.1/64
+int fa 0/3 2001:d68:2.1/64
+
+R2
+int fa 0/1 2001:d68:20.2/64
+int fa 0/2 2001:d68:3.1/64
+
+=> konfigurasi 
+==> ip address
+()# conf t
+()# int fa 0/1 
+()# no shutdown 
+()# ipv6 address 2001:d68:10.1/64
+
+
+=> konfigurasi static routing
+()# ipv6 unicast-routing
+()# ipv6 route destinationnetworkpc gateway
+
+==
+()# ipv6 unicast-routing
+()# ipv6 route 2001:d68:1:0/64 2001:d68:10.2/64
+
+====================================
+ospf
+
+()#ipv6 unicast-routing
+()#ipv6 routing ospf 1
+()#router-id 10.10.10.1 (ini id bukan ip tapi harus seperti ipv4 dan harus beda antar router)
+()#int fa 0/1 
+()#ipv6 ospf area 1
+()#int fa 0/2
+()#ipv6 ospf area 1
+
+
+===========================
+EIGRP

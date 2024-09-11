@@ -1,0 +1,23 @@
+1. melihat semua konfig
+
+ show running config
+
+2. Menyimpan configurasi
+   copy running-config startup
+  ===atau
+  write
+
+3. melihat vlan
+   show vlan brief
+
+4. melihat mac address yang masuk 
+  show mac address table
+
+5. melihat ip dhcp
+   show ip dhcp pool
+
+6.melihat vrrp
+
+ show vrrp brief
+
+7. 

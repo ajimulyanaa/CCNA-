@@ -1,0 +1,181 @@
+STP 
+Spanning Tree Protocol adalah switch akan memblokir salah satu link/port ketika redundancy sehingga tidak terjadi looping pada jaringan. STP sudah aktif secara default pada perangkat cisco. Stp bisa dimatikan namun sangat tidak disarankan.
+
+-> redundancy adalah link cadangan/port cadangan
+TPOLOGI 2 SWITCH
+-> melihat setingan stp
+ show spanning-tree 
+  - PWD = aktif
+  - BLK = blok
+-> cost merupakan jarak menuju brigde, cost dapat dihitung berdasarkan bandwith menuju bridge
+
+10Mb = 100
+100Mb = 19
+1Gb   = 4
+10Gb  = 2
+
+=> manipulasi bandwith stp
+()#conf t
+()#int fa 0/1
+()#speed 10 
+
+// artinya bandwithnya adalah 10 Mb
+PERHATIAN bandwith akan mengikuti speed terkecil dan harus diubah di semua port
+----------
+- switch -
+----------
+|fa0/2   |fa0/1 
+X        | 
+|        |
+|        |
+|        |      
+|fa0/2   |fa0/1 
+----------
+- switch -
+----------
+
+int 0/2 akan mati karena stp aktif, jika port 0/1 putus mak 0/2 akan aktif.
+
+==========================================================================================
+TOPOLOGI 3 switch
+
+----------                                 ----------
+- switch ----------------------------------- switch -
+----------                                 ----------
+          \                               /
+           \                             /
+            \                           /
+                    ----------
+		    - switch -
+		    ----------
+
+A. Route brige = switch utama atau raja switch yang jadi server 
+-port yang keluar dari route bridge disebut dengan designited port
+     route bridge ditentukan oleh 
+1. priority terkecil
+2. mac adress terkecil
+==> melihat mac adress dwitch [ show int vlan 1] Perhatikan bagian hardware is cpu interface .....mac address
+mac address merupakan angka desimal dan nilai paling kecil akan menjadi route bridge (perhatikan empat angka awal)
+
+B. desiginited port merupakan port yang berasal dari route bridge dan dipastikan statusnya up (hidup)
+
+C. Route port interface non route bridge tapi merupakan inteface tercepat menuju route bridge
+
+D. Alternate port merupakan port yang di blok dan statusnya adalah Down
+
+=======================================================================
+MANIPULASI ROUTE BRIDGE
+
+Semua switch memiliki priority yang sama jadi untuk menentukan route bridge masih menggunakan opsi yang kedua yaitu mac-address. itu tentu tidak efektif karena switch versi lama akan menjadi route bridge dikarenakan memiliki mac-address yang kecil NAMUN secara performa lebih bagus yang baru. untuk itu harus melakukan manipulasi route bridge dengan mengganti priority switch.
+
+Untuk menentukan priority nilainya adalah 0 - 61440 namun kelipatan 4066. agar memudahkan dalam menentukan angka acak pada saat setting priority dan akan direkomendasikan angka yang dapat dipakai. sbb
+
+alowwed value are : 0 4096 8192
+
+SETTING DIBAWAH 32768
+
+====
+()#conf t
+()#spaning-tree vlan 1 priority 20480
+
+
+==============================================================
+PVSTP
+Per Vlan spaning-tree
+
+->setiap vlan memiliki settingan stp
+
+ 1. buat topologi 3 switch
+ 2. buat 3 vlan (vlan 2 dan vlan 3) karena vlan 1 tidak perlu dibuat karena sudah ada default
+
+->Manipulasi Root bridge 
+  bertujuan agar beban terbagi
+
+Switch 2
+()#conf t
+()#spaning-tree vlan 2 priority 2048
+
+maka vlan 2 route bridgenya akan pindah pada switch 2
+
+
+===================================================================
+===================================================================
+
+STP 2 switch 
+
+----------
+- switch -
+----------
+|fa0/2   |fa0/1 
+X        | 
+|        |
+|        |
+|        |      
+|fa0/2   |fa0/1 
+----------
+- switch -
+----------
+
+pada topologi stp 2 switch maka inteface terkecil akan menjadi route port
+
+
+=====
+Manipulasi stp 2 switch
+
+?? block fa 0/1 sw 1
+
+=>jadikan route bridge switch 2
+sw 2
+
+()#conf t
+()#spaning-tree vlan 1 route primary
+
+switch 2 akan menjadi route bridge
+
+=> jadikan fa 0/1 bloking
+======
+fa 0/1 menjadi bloking harus manipulasi bandwith kedua port
+
+sw 2
+()#inf fa 0/1
+()#speed 10
+
+sw 1
+()#inf fa 0/1
+()#speed 10
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

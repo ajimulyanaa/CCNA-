@@ -1,0 +1,11 @@
+1. >enable
+2. #configure terminal
+--------------------------------------------------------------
+   // konfigurasi ip address interface
+
+3.(config)#interface fa 0/0 
+4.(config)#ip address 192.168.0.1 255.255.255.0
+5.(config)#no shutdown
+6.(config)#do write
+7.(config)#exit
+   

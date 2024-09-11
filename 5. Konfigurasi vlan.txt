@@ -1,0 +1,242 @@
+melihat vlan
+#show vlan brief
+melihat device trunk
+#show int trunk
+melihat ip
+#show ip int brief
+
+
+vlan adalah virtual local area network 
+
+vlan dapat mengelompokan suatu port sehinggan menjadi suatu kelompok jaringan yang sama. vlan dapat diconfig dalam sehingga port dapat dikelompokan untuk kepentingan tertentu.
+
+
+========================
+konfigurasi vlan
+
+===========
+makuk ke cli switch
+
+-enable
+-conf t
+
+===========
+1. MEMBUAT VLAN
+===========
+
+(config)# vlan 10 (angka 10 merupakan id vlan harus berbeda dengan id vlan lainya)
+(config)# name vlan1 (vlan1 merupakan nama dari vlan dengan id 10)
+(config)#exit
+
+==========
+2. memasukan port kedalan kelompok vlan
+==========
+
+(config)#int fa 0/1
+(config)#switch port mode access
+(config)#switch access vlan 10 (artinya fa 0/1 masuk kedala kelompok vlan 10)
+(config)#exit
+
+=====================
+interface dari 0/1 sampai dengan fa 0/3 masuk ke vlan yang sama
+=====================
+(config)#int range fa 0/1-3
+(config)#switch port mode access
+(config)#switch access vlan 10 (artinya fa 0/1 sampai dengan fa 0/3 masuk kedala kelompok vlan 10)
+(config)#exit
+
+=========
+3. MODE TRUNK
+========= 
+mode ini berfungsi untuk menghubungkan antar perangkar device contohnya switch dengan switch dan switch dengan router
+
+========
+(config)#int fa 0/0
+(config)#switch mode trunk
+(config)#exit
+
+===============> artinya fa 0/0 akan dihubungkan ke device lain
+
+========================
+#show int trunk ==> untuk melihat vlan mana yang diizinkan melewati mode trunk
+ALLOWED TRUNK
+untuk mengijinkan vlan apa saja yang diizinkan melewati mode trunk
+defaultnya semua diizinkan dari vlan 1-4955
+=======================
+=> konfigurasi
+(config)#int fa 0/1 => port yang akan di mode trunk
+      ()#switch trunk allowed vlan 10,20 (artinya vlan 10 dan 20 diizinkan untuk melewati trunk)
+
+
+=> menambahkan vlan untuk diizinkan melewati trunk (add)
+(config)# int fa 0/1
+      ()#swicthport trunk allowed vlan add 30
+ 
+=> menghapus daftar vlan yang diizinkan (remove)
+menghapus vlan 20
+=> menghapus vlan untuk diizinkan melewati trunk 
+(config)# int fa 0/1
+      ()#swicthport trunk allowed vlan remove 20
+
+==========
+vlan trunking
+antara vlan yang sama bisa berkomunikasi meskipun beda switch
+=>TRUNK PADA MLS 
+agar tidak terdapat masalah saat menghubungkan metode trunk maka harus mengubah protokol ke 802.IC (dotIq)
+
+== setting perubahan protokol
+(config)#int fa 0/3 (interface yang terhubung pada sesama device)
+        #switchport trunk encapsulation dotIq
+
+
+==========melihat setingan switchport
+show int fa 0/3 switch port
+
+Administratif = mode yang digunakan
+Operatonalmode = hasil dari mode yang digunakan
+
+
+===> konfigurasi DTP
+dynamic trunk protocol
+
+=>mode dyamic desirable
+
+()#int fa 0/3
+()#switch mode dyamic desirable
+
+=>mode dyamic auto
+
+()#int fa 0/3
+()#switch mode dyamic auto
+
+==========================================================
+3. MEMBERIKAN ALAMAT IP PADA VLAN 
+
+==============
+MASUK KE ROUTER
+
+-enable
+-conf t
+
+(config)#int fa 0/0.10 (fa 0/0.10 artinya port 0/0 mengarah ke vlan dengan id 10)
+(config)#encapsulation don IQ 10 (10 merupakan id dari vlan)
+(config)#ip address 192.168.1.1 255.255.255.0
+(config)#exit
+
+
+
+=========================
+setting DHCP  pada vlan
+
+
+(config)#ip dhcp pool A (a merupakan pengelompokan dhcp)
+(config)#network 192.168.1.0 255.255.255.0
+(config)#default router 192.168.1.1
+(config)#exit
+(config)#ip dhcp exclude address 192.168.1.1 192.168.1.4
+
+====================================
+====================================
+SWITCH LAYER 3
+merupakan switch dengan kode awal angka 3 mirip seperti router bisa menentukan ip
+
+1. mengaktifkan fungsi layer 3 pada switch kode 3
+#conf t
+()#ip routing
+()#exit
+
+2. memberikan ip pada vlan di switch 3
+
+()#int vlan 10
+()#ip address 192.168.1.1 255.255.255.0
+
+====>wajib mengaktifkan no shutdown pada vlan 1 karena merupakan vlan default
+
+()#int vlan 1
+()#ip address 192.168.2.1 255.255.255.0
+()#no shutdown
+
+===> show ip int brief
+jika status sudah yes manual up maka inteface sudah aktif
+
+
+3. dhcp pada switch layer 3
+
+#conf t
+()#ip dhcp pool kode
+()#nerwork 192.168.2.0 255.255.255.0
+()#default-router 192.168.2.1
+()#dns-server 8.8.8.8
+
+
+
+=======================================================
+VTP (vlan trunking protocol)
+=> Vtp harus menggunakan trunking antar device
+
+VTP adalah membuat vlan secara otomatis,vtp hanya membuat vlan saja pembagian port dilakukan pada switch masing masing pada vtp terdapat 3 mode
+1. vtp mode server (akan bertindak sebagai server diperbolehkan lebih dari 1)
+2. vtp mode client (akan bertindak sebagi clien yang akan mengikuti server diperbolehkan lebih dari satu yang akan terhubung ker server)
+3. vtp mode transparent ( mode ini tidak mengikuti server)
+
+=====
+KONFIGURASI
+====
+1. vtp mode server
+  ()# vtp mode server
+  ()# vtp domain aji  => harus sama antar client jaringan yang akan terhubung
+  ()# vtp password aji => harus sama antar client jaringan yang akan terhubung
+  ()#vlan 10 (selanjutnya adalah membuat vlan yang akan otomatis tercopy pada mode client)
+
+2. vtp mode sever
+  ()# vtp mode client
+  ()# vtp domain aji  => harus sama antar client jaringan yang akan terhubung
+  ()# vtp password aji => harus sama antar client jaringan yang akan terhubung
+
+3. vtp mode transparent
+  ()# vtp mode transparent
+  ()# vtp domain aji  
+  ()# vtp password aji 
+
+-------------------------------PENTING--------------------
+jika ingin menambahkan vlan maka harus melalui vtp server dan akan tercopy keseluruh mode client, di mode client tidak bisa melakukan perubahan
+
+-----------------PROBLEM CONFIGURATION REVISION---
+Hal ini terjadi apabila menggunakan switch yang bekas sehingga masih ada setingan vlan sebelumnya hal itu menyebabkan configuration revision yang lebih tinggi. pada vtp jika ada yang memiliki configuraton revision paling tinggi maka akan diikuti (dianggap server) oleh seluruh perangkat switch yang terhubung.
+====>SOLVING PROBLEM
+Mereset revision number 
+ 1. ubah mode ke vtp transparent (untuk mereset revision number)
+ 2. kembalikan ke vtp mode client/server
+
+makan konfigurasi sebelumnya akan terhapus dan akan mengikuti konfigurasi server
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

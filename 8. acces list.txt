@@ -1,0 +1,118 @@
+Fungsi acceslist adalaj memblokir atau mengijinkan suatu paket
+#aahow acces-list
+
+Acces list terdiri dari 2 Janis
+1. standar acces list = hanya berdasarkan source 
+2. extended acces list = berdasarkan source, ip destination, ip protokol jadi bisa lebih spesifik
+
+contoh topologi 2 router
+
+R1
+int fa 0/1 10.10.10.1
+vlan 1 192.168.10.1
+vlan 2 192.168.20.1
+vlan 3 192.168.30.1
+
+R1 
+
+int fa 0/1 10.10.10.2
+int fa 0/2 192.168.1.1
+
+server 1 192.168.1.10
+server 2 192.168.1.20
+server 3 192.168.1.30
+
+
+configurasi
+1. block vlan 20 to server 1
+
+R2
+#conf t
+#access-list 1 deny 192.168.10.20 0.0.0.255
+ => (angka 1 merupakan number acceslist (<1-99 adalah standar acces list > <100-199 merupakan extended acces list)
+ => (deny = blokir permit =izinkan)
+ => (192.168.1.20.0 adalah network vlan 2 yang di blokir <network, any (semua), host (hanya satu komputer)
+#int fa 0/1
+#ip acces-group out (out / in out= ditanamkan menuju luar router. in = ditanamkan menuju ke router)
+
+
+-----
+sequence number 
+acces list berjalan sesuai urutan dari perintah awal hingga perintah akhir. acces list tidak bisa ditimpa oleh perintah lainya jadi jika ada port yang tidak terblokir maka kemungkinan sequence numbernya besar untuk mengecek sequence number maka ketik perintah
+#show ip access-list 
+ makan akan tampil 
+ 10 deny ....
+ 20 permit ...
+ 30 deny .....
+
+MERUBAH SEQUENCE NUMBER 
+
+# ip acces-list standar 1 
+# no  30 (mengapus sequence number 30)
+# 15 deny host 192.168.10.2 (15 merupakan sequence number yang lebih rendah dari 20)
+
+==========
+ KONFIGURASI NAMED ACL 
+
+
+=> ONLY PERMIT VLAN 30
+R2
+#Iint fa 0/1
+#ip access list standar namabebas 1
+#permit 192.168.30.0  0.0.0.255 
+#ip acces-group nemabebas out
+
+====================
+EXTENDED ACCESS LIST
+
+KONFIGURASI
+
+#conf t
+=> blokir http ke semua server  
+#access-list 100 deny tcp any 192.268.1.0 0.0.0.255 eq 80 (80 merupakan port http)
+=>semua  vlan dapat mengakses server 1
+#access-list 100 permit ip any host 192.168.1.0 (192.168.1.0 merupkan ip dasri server 1)
+=>only vlan 20 can access server 2
+#access-list 100 permit ip 192.168.20.0 0.0.0.255 host 192.168.1.20
+=>only vlan 20 can access server 3
+#access-list permit ip 192.168.20.0 0.0.0.255 host 192.168.1.30
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
